@@ -2,6 +2,7 @@
 #include<windows.h>
 #include<vector>
 #include<string>
+#include<conio.h>
 #include<iostream>
 
 
@@ -12,16 +13,18 @@
 using namespace std;
 
 
+
 class IBuilder {
 private:
-	int height, width;
 	vector<string> menuOptions;
+	vector<void(*)()> menuFunctions; // VECTOR THAT HOLDS FUNCTIONS!!!!
 
 	void clearScreen();
+	size_t _get_len_FromOptions() const;
 	
 public:
-	void buildMenu(vector<string> menuData, 
-					int selection, 
+	void displayMenu(vector<string> menuData,
+					int selection,
 					int w, 
 					int h, 
 					bool);
@@ -34,8 +37,10 @@ public:
 
 
 	void push_toOptions(vector<string>);
-	size_t _get_len_FromOptions() const;
 	
+	void push_Functions(void(*)());
+	void push_Functions(vector<void(*)()>f);
+	void buildMenu();
 
 	IBuilder();
 	IBuilder(vector<string>);

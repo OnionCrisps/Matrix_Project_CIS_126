@@ -5,7 +5,7 @@ void IBuilder::clearScreen()
 	system("cls");
 }
 
-void IBuilder::buildMenu(vector<string> menuData, 
+void IBuilder::displayMenu(vector<string> menuData, 
 						int selection, 
 						int w,
 						int h, 
@@ -22,7 +22,15 @@ void IBuilder::buildMenu(vector<string> menuData,
 		//if the centering is enabled, then the menu will print centered
 		isCentered ? setCursorPosition(pos_X - (menuData[i].length() + 2) / 2, 
 			pos_Y + i) : setCursorPosition(pos_X, pos_Y + i);
-
+		if (i == selection) {
+			s_TxtColor(BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // red bg, white text
+			cout << "[" << menuData[i] << "]";
+			s_TxtColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // reset color
+		}
+		else {
+			s_TxtColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+			cout << " " << menuData[i] << " ";
+		}
 		
 	}
 }
@@ -66,6 +74,62 @@ void IBuilder::push_toOptions(vector<string> items)
 
 size_t IBuilder::_get_len_FromOptions() const { return menuOptions.size();}
 
+void IBuilder::push_Functions(void(*func)())
+{
+	menuFunctions.push_back(func);
+}
+
+void IBuilder::push_Functions(vector<void(*)()> f)
+{
+	menuFunctions = f;
+}
+
+
+
+
+
+void IBuilder::buildMenu()
+{
+	int selected = 0;
+	int maxSize = _get_len_FromOptions();
+	int prev_W = -1, prev_H = -1;
+	int lastSelection = -1;
+	int width, height;
+	while (true) {
+		width = getConsoleWidth();
+		height = getConsoleHeight();
+
+		if (_kbhit()) {
+			int key = _getch();
+			if (key == 224) {
+				key = _getch();
+
+				if (key == UP_ARROW) {
+					selected = (selected <= 0) ? maxSize - 1 : selected - 1;
+				}
+				else if (key == DOWN_ARROW) {
+					selected = (selected + 1) % maxSize;
+				}
+			}
+			else if (key == ENTER_KEY) {
+				clearScreen();
+				menuFunctions[selected]();
+				system("pause");
+				lastSelection = -1; // force redraw
+			}
+		}
+
+		if (selected != lastSelection || width != prev_W || height != prev_H) {
+			clearScreen();
+			displayMenu(menuOptions, selected, width, height);
+			lastSelection = selected;
+			prev_W = width;
+			prev_H = height;
+		}
+
+		Sleep(50);
+	}
+}
 
 
 IBuilder::IBuilder(){}

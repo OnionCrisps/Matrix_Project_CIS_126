@@ -18,12 +18,12 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="InterfaceBuilder.cpp">
+    <ClCompile Include="classes\InterfaceBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InterfaceBuilder.h">
+    <ClInclude Include="classes\InterfaceBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
