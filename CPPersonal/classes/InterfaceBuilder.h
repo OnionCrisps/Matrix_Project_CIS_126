@@ -12,12 +12,13 @@
 
 using namespace std;
 
-
-
 class IBuilder {
 private:
 	vector<string> menuOptions;
 	vector<void(*)()> menuFunctions; // VECTOR THAT HOLDS FUNCTIONS!!!!
+	
+	bool isCentered = true;
+
 
 	void clearScreen();
 	size_t _get_len_FromOptions() const;
@@ -26,9 +27,9 @@ public:
 	void displayMenu(vector<string> menuData,
 					int selection,
 					int w, 
-					int h, 
-					bool);
+					int h);
 	void setCursorPosition(int x, int y);
+	void setCentering(bool);
 	void s_TxtColor(WORD attributes);
 
 
@@ -43,5 +44,6 @@ public:
 	void buildMenu();
 
 	IBuilder();
+	IBuilder(bool);
 	IBuilder(vector<string>);
 };

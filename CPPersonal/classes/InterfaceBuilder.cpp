@@ -8,9 +8,9 @@ void IBuilder::clearScreen()
 void IBuilder::displayMenu(vector<string> menuData, 
 						int selection, 
 						int w,
-						int h, 
-						bool isCentered=true)
+						int h)
 {
+
 	int pos_X = w, pos_Y = h; //centered X, and Y
 
 	if (isCentered) {
@@ -21,7 +21,7 @@ void IBuilder::displayMenu(vector<string> menuData,
 	{
 		//if the centering is enabled, then the menu will print centered
 		isCentered ? setCursorPosition(pos_X - (menuData[i].length() + 2) / 2, 
-			pos_Y + i) : setCursorPosition(pos_X, pos_Y + i);
+			pos_Y + i) : setCursorPosition(0, i);
 		if (i == selection) {
 			s_TxtColor(BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // red bg, white text
 			cout << "[" << menuData[i] << "]";
@@ -42,6 +42,11 @@ void IBuilder::setCursorPosition(int x, int y)
 	//sCCP takes  HANDLE and COORD arguments
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 
+}
+
+void IBuilder::setCentering(bool c)
+{
+	isCentered = c;
 }
 
 void IBuilder::s_TxtColor(WORD attributes)
@@ -115,6 +120,7 @@ void IBuilder::buildMenu()
 				clearScreen();
 				menuFunctions[selected]();
 				system("pause");
+
 				lastSelection = -1; // force redraw
 			}
 		}
@@ -132,7 +138,12 @@ void IBuilder::buildMenu()
 }
 
 
-IBuilder::IBuilder(){}
+IBuilder::IBuilder() { isCentered = true; }
+
+IBuilder::IBuilder(bool center) : isCentered(center)
+{}
 
 IBuilder::IBuilder(vector<string> data) : menuOptions(data)
-{}
+{
+	isCentered = true;
+}

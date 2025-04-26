@@ -2,8 +2,40 @@
 
 using namespace std;
 
+
+void displayFileCreation();
+void displayEnterDirectory();
+void displayStart();
+void displayHelp();
+void displayQuit();
+void displayMainMenu();
+
+int main() {
+	displayMainMenu();
+
+	return 0;
+}
+
+void displayFileCreation() {
+	cout << "File at: " << endl;
+	return;
+}
+
+void displayEnterDirectory() {
+	cout << "Enter directory: " << endl;
+	return;
+
+}
+
 void displayStart() {
-	cout << "Start" << endl;
+	IBuilder newMenu(false);
+	vector<string> options = { "Create File", "Enter Directory", "Quit" };
+	vector<void(*)()> functions = {displayFileCreation, displayEnterDirectory, displayMainMenu};
+	newMenu.push_toOptions(options);
+	newMenu.push_Functions(functions);
+
+	newMenu.buildMenu();
+
 	return;
 }
 void displayHelp() {
@@ -16,10 +48,9 @@ void displayQuit() {
 	return;
 }
 
-int main() {
-
+void displayMainMenu()
+{
 	IBuilder menu;
-
 	vector<string> options = { "Start Program", "Help", "Quit" };
 	vector<void(*)()> functions = { displayStart, displayHelp, displayQuit };
 
@@ -28,5 +59,4 @@ int main() {
 
 	menu.buildMenu();
 
-	return 0;
 }
