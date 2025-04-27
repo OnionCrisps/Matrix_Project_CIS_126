@@ -1,141 +1,152 @@
-# CPPersonal
+# Interface Builder (IBuilder)
 
-# 🧱 IBuilder Class Documentation
-
-## 📚 Overview
-
-`IBuilder` is a Windows-only C++ class designed to manage and display console-based interactive menus.  
-It's perfect for CLI tools, games, utilities, or dev environments where the user navigates via arrow keys and selects options with Enter.
+A simple C++ console-based **Menu Builder** for Windows that allows you to easily create, display, and handle interactive text-based menus.  
+Supports dynamic resizing, keyboard navigation (arrow keys + enter), custom text colors, and function callbacks tied to menu options.
 
 ---
 
-## 📦 Class Members
+## Features
 
-### 🔒 Private Members
+- Centered or non-centered menu display
+- Smooth arrow key navigation (up/down)
+- Function binding for menu selections
+- Console resize support
+- Custom text color support
+- Clear and simple usage
+
+---
+
+## Requirements
+
+- **Windows** OS (uses Windows-specific libraries like `windows.h`, `conio.h`)
+- **C++11** or higher
+- Compatible compiler (Visual Studio, g++, clang on Windows)
+
+---
+
+## Files
+
+- `InterfaceBuilder.h` — Main header file with the `IBuilder` class.
+- `InterfaceBuilder.cpp` — Implementation file.
+
+---
+
+## Basic Usage
 
 ```cpp
-vector<string> menuOptions;
-void clearScreen();
+#include "InterfaceBuilder.h"
+
+// Example functions to bind
+void sayHello() {
+    cout << "Hello World!" << endl;
+}
+
+void sayBye() {
+    cout << "Goodbye!" << endl;
+}
+
+int main() {
+    IBuilder menu;
+
+    // Push menu options
+    menu.push_toOptions({"Say Hello", "Say Goodbye"});
+
+    // Push corresponding functions
+    menu.push_Functions({sayHello, sayBye});
+
+    // Build and run the menu
+    menu.buildMenu();
+
+    return 0;
+}
 ```
-- `menuOptions`: Stores the list of menu option strings.
-- `clearScreen()`: Clears the console screen.
 
 ---
 
-## 🛠️ Public Methods
+## Key Controls
 
-### IBuilder()
+- **Up Arrow**: Move selection up
+- **Down Arrow**: Move selection down
+- **Enter**: Select an option and execute its corresponding function
 
+---
+
+## Class Reference: `IBuilder`
+
+### Constructors
+
+- `IBuilder()`
+  - Default constructor. Initializes with centered menu.
+
+- `IBuilder(bool center)`
+  - Initializes menu with centering based on `center` parameter.
+
+- `IBuilder(vector<string> data)`
+  - Initializes menu with provided options and centered alignment.
+
+
+### Public Methods
+
+- `void displayMenu(vector<string> menuData, int selection, int w, int h)`
+  - Displays the menu options on screen.
+  - Highlights the currently selected option.
+
+- `void setCursorPosition(int x, int y)`
+  - Sets the cursor position in the console window.
+
+- `void setCentering(bool center)`
+  - Enables or disables centering of menu items.
+
+- `void s_TxtColor(WORD attributes)`
+  - Sets the text color and attributes in the console.
+
+- `int getConsoleWidth() const`
+  - Returns the current width of the console window.
+
+- `int getConsoleHeight() const`
+  - Returns the current height of the console window.
+
+- `void push_toOptions(vector<string> items)`
+  - Sets the menu options to be displayed.
+
+- `void push_Functions(void(*func)())`
+  - Adds a single function to the list of actions.
+
+- `void push_Functions(vector<void(*)()> functions)`
+  - Adds multiple functions to the list of actions.
+
+- `void buildMenu()`
+  - Runs the interactive menu loop allowing user navigation and selection.
+
+### Private Methods
+
+- `void clearScreen()`
+  - Clears the console screen.
+
+- `size_t _get_len_FromOptions() const`
+  - Returns the number of menu options.
+
+
+---
+
+## Customization
+
+- `setCentering(bool)` — Set whether the menu options should be centered.
+- `s_TxtColor(WORD attributes)` — Change console text color.
+
+Example:
 ```cpp
-IBuilder();
+menu.setCentering(false); // Left-align menu
 ```
-Default constructor. Initializes an empty builder.
+
 
 ---
 
-### IBuilder(vector<string> menuData)
+## License
 
-```cpp
-IBuilder(vector<string> menuData);
-```
-Constructor that sets up the builder with an initial list of menu options.
+This project is released under the MIT License.
 
 ---
 
-### void buildMenu(vector<string> menuData, int selection, int w, int h, bool highlight)
+> Made with ❤️ for Windows console apps.
 
-```cpp
-void buildMenu(vector<string> menuData, int selection, int w, int h, bool highlight);
-```
-Builds and displays a visual menu on the console.
-
-- **menuData**: Vector of menu option strings.  
-- **selection**: Index of the currently selected option.  
-- **w, h**: X and Y screen position to display the menu.  
-- **highlight**: Whether to highlight the currently selected item.
-
----
-
-### void setCursorPosition(int x, int y)
-
-```cpp
-void setCursorPosition(int x, int y);
-```
-Moves the console cursor to a specific position `(x, y)` using the Windows API.
-
----
-
-### void s_TxtColor(WORD attributes)
-
-```cpp
-void s_TxtColor(WORD attributes);
-```
-Sets the console text color using `WORD` color attributes.
-
-Example attributes:
-- `FOREGROUND_RED`
-- `FOREGROUND_GREEN`
-- `FOREGROUND_BLUE`  
-Combine using bitwise OR: `FOREGROUND_RED | FOREGROUND_INTENSITY`
-
----
-
-### int getConsoleWidth() const
-
-```cpp
-int getConsoleWidth() const;
-```
-Returns the current console window width.
-
----
-
-### int getConsoleHeight() const
-
-```cpp
-int getConsoleHeight() const;
-```
-Returns the current console window height.
-
----
-
-### void push_toOptions(vector<string> newOptions)
-
-```cpp
-void push_toOptions(vector<string> newOptions);
-```
-Adds new strings to the internal `menuOptions` list.
-
----
-
-### size_t _get_len_FromOptions() const
-
-```cpp
-size_t _get_len_FromOptions() const;
-```
-Returns the number of options stored in `menuOptions`.
-
----
-
-## 🎯 Keyboard Constants
-
-```cpp
-#define UP_ARROW    72
-#define DOWN_ARROW  80
-#define ENTER_KEY   13
-```
-These define key codes typically returned by `_getch()` from `<conio.h>`.
-
----
-
-## 📚 Dependencies
-
-```cpp
-#include <windows.h>
-#include <vector>
-#include <string>
-#include <iostream>
-```
-- `<windows.h>`: For console manipulation and cursor positioning.  
-- `<vector>`, `<string>`: To store menu options.  
-- `<iostream>`: For console I/O.
----
