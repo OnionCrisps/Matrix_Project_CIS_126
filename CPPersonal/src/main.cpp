@@ -1,5 +1,6 @@
 #include "../classes/InterfaceBuilder.h"
 #include <fstream>
+
 using namespace std;
 
 
@@ -34,19 +35,24 @@ void displayOperationPrompt(); // different from displaying operations asked whe
 void displaySurrounded(); // differs from displayResultMatrix();
 void displayMaxima();
 
+void displayResultMatrix(int** outputMatrix, int& row, int& col);
 
 
+void colorPrint(const string& data, WORD colorAttribute);
 //processing functions
 
 operationFile createFile();
 operationFile selectFile();
 
 int** loadMatrix(const string& fileName, int& rows, int& cols);
+void freeMatrix(int**& matrix, int rows);
+
 void find_surrounded(int**& inputMatrix, int**& outputMatrix, int rows, int columns);
 void find_localMaxima();
 
 
-
+//C:\\Users\\redgi\\OneDrive\\Desktop\\file.txt
+//C:\\Users\\redgi\\OneDrive\\Desktop\\outfile.txt
 
 //main loop
 int main() {
@@ -56,8 +62,12 @@ int main() {
 
 
 
-
+//handle menu for file creation
 void displayFileCreation() {
+
+	freeMatrix(globalInputMatrix, globalRows);
+	freeMatrix(globalOutputMatrix, globalRows);
+
 	globalFilePaths = createFile(); // Save paths globally
 	
 	//loads the matrix to global storage, shared between functions
@@ -75,8 +85,12 @@ void displayFileCreation() {
 	displayOperationPrompt();
 }
 
+//handle menu option for already created file
 void displayEnterDirectory() {
-	operationFile file_Paths = selectFile();
+	freeMatrix(globalInputMatrix, globalRows);
+	freeMatrix(globalOutputMatrix, globalRows);
+
+	globalFilePaths = selectFile();
 
 	//loads the matrix to global storage, shared between functions
 	globalInputMatrix = loadMatrix(globalFilePaths.input_File, globalRows, globalCols);
@@ -95,8 +109,9 @@ void displayEnterDirectory() {
 
 }
 
-void displayStart() {
-	IBuilder newMenu(false);
+void displayStart() { 
+	//builds menu (For nathan) 
+	IBuilder newMenu(false); // false turns off centering
 	vector<string> options = { "Create File", "Enter Directory", "Back" };
 	vector<void(*)()> functions = {displayFileCreation, displayEnterDirectory, displayMainMenu};
 	newMenu.push_toOptions(options);
@@ -112,8 +127,7 @@ void displayHelp() {
 }
 
 void displayQuit() {
-	cout << "Quit" << endl;
-	return;
+	exit(0);
 }
 
 void displayMainMenu()
@@ -133,10 +147,11 @@ void displayOperations()
 {
 	IBuilder menu;
 	vector<string> options = { "Find Surrounded", "Find Local Maxima", "Back", "Quit"};
-	vector<void(*)()> functions = {displaySurrounded, displayMaxima, displayOperations, displayOperationPrompt};
+	vector<void(*)()> functions = {displaySurrounded, displayMaxima, displayOperationPrompt, displayQuit};
 
 	menu.push_toOptions(options);
 	menu.push_Functions(functions);
+	menu.buildMenu();
 }
 
 void displayOperationPrompt()
@@ -151,23 +166,54 @@ void displayOperationPrompt()
 	menu.buildMenu();
 }
 
-//WORKING ON THIS ONE
 void displaySurrounded()
 {
 	find_surrounded(globalInputMatrix, globalOutputMatrix, globalRows, globalCols);
+	displayResultMatrix(globalOutputMatrix, globalRows, globalCols);
 }
 
+//NATHAN
 void displayMaxima()
 {
+	//find_localMaxima(...);
+	//displayResultMatrix(...);
+}
+
+void displayResultMatrix(int** outputMatrix, int& row, int& col)
+{
+	for (int i = 0; i < row; i++) {
+		for (int j = 0; j < col; j++) {
+			WORD attribute = (outputMatrix[i][j] == 1 ? FOREGROUND_GREEN | BACKGROUND_GREEN:FOREGROUND_RED | BACKGROUND_RED);
+
+			colorPrint(to_string(outputMatrix[i][j]), attribute);
+		}
+		cout << endl;
+	}
+
+}
+
+void colorPrint(const string& data, WORD colorAttribute)
+{
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), colorAttribute);
+	cout << data;
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED|FOREGROUND_BLUE|FOREGROUND_GREEN);
+
 }
 
 //Create the file
 operationFile createFile()
 {
 	string fileLocation, outputLocation;
-	cout << "Enter the name and path of the file (use \\\\ between directories): ";  getline(cin, fileLocation); cout << endl;
 
-	cout << "Enter the name and path of the output file (use \\\\ between directories): "; getline(cin, outputLocation); cout << endl;
+	do {
+		cout << "Enter the name and path of the file (use \\\\ between directories): ";
+		getline(cin, fileLocation); cout << endl;
+	} while (empty(fileLocation));
+
+	do {
+		cout << "Enter the name and path of the output file (use \\\\ between directories): ";
+		getline(cin, outputLocation); cout << endl;
+	} while (empty(outputLocation));
 
 	ofstream new_File(fileLocation), output_File(outputLocation);
 	
@@ -176,13 +222,18 @@ operationFile createFile()
 	file_Structure.output_File = outputLocation;
 
 	if (new_File.is_open()) {
-		cout << "Enter the amount of rows in the color matrix: ";
-		cin >> globalRows; cout << endl;
+		do {
+			cout << "Enter the amount of rows in the color matrix: ";
+			cin >> globalRows; cout << endl;
+		} while (globalRows <= 2);
 
-		cout << "Enter the amount of columns in the color matrix: ";
-		cin >> globalCols; cout << endl;
-		new_File << globalRows;
-		new_File << globalCols;
+		do {
+			cout << "Enter the amount of columns in the color matrix: ";
+			cin >> globalCols; cout << endl;
+		} while (globalCols <= 2);
+
+		new_File << globalRows << endl;
+		new_File << globalCols << endl;
 		for (int i = 0; i < globalRows; i++) {
 			for (int j = 0; j < globalCols; j++) {
 				int data = 0;
@@ -190,11 +241,12 @@ operationFile createFile()
 					cout << "Enter pixel data for position (" << i << ", " << j << "): ";
 					cin >> data; cout << "\n";
 				} while (data < 0 || data > 255);
-				new_File << data;
+				new_File << data << " ";
 			}
+			new_File << endl;
 		}
 		new_File.close();
-		cout << "\n File created successfully!" << endl; Sleep(20);
+		cout << "\nFile created successfully!" << endl;
 	}
 	else { cerr << "Unable to create file!"; displayStart();}
 
@@ -204,10 +256,18 @@ operationFile createFile()
 
 operationFile selectFile()
 {
-	string fileLocation, outputLocation;
-	cout << "Enter the name and path of the file (use \\\\ between directories): ";  getline(cin, fileLocation); cout << endl;
+	string fileLocation=" ", outputLocation=" ";
 
-	cout << "Enter the name and path of the output file (use \\\\ between directories): "; getline(cin, outputLocation); cout << endl;
+	do {
+		cout << "Enter the name and path of the file (use \\\\ between directories): ";
+		getline(cin, fileLocation); cout << endl;
+	} while (empty(fileLocation));
+
+	do {
+		cout << "Enter the name and path of the output file (use \\\\ between directories): ";
+		getline(cin, outputLocation); cout << endl;
+	} while (empty(outputLocation));
+
 	operationFile file_Structure;
 	file_Structure.input_File = fileLocation;
 	file_Structure.output_File = outputLocation;
@@ -218,9 +278,10 @@ operationFile selectFile()
 
 	myFile.close();
 
-	return operationFile();
+	return file_Structure;
 }
 
+//loads the matrix with the file data
 int** loadMatrix(const string& filename, int& rows, int& cols)
 {
 	ifstream inFile(filename);
@@ -246,9 +307,22 @@ int** loadMatrix(const string& filename, int& rows, int& cols)
 	return matrix;
 }
 
+void freeMatrix(int**& matrix, int rows) {
+	if (matrix) {
+		for (int i = 0; i < rows; i++) {
+			delete[] matrix[i];
+		}
+		delete[] matrix;
+		matrix = nullptr;
+	}
+}
+
+
 void find_surrounded(int**& inputMatrix, int**& outputMatrix, int rows, int columns) {
 	int threshold = 0;
-	cout << "Enter the threshold value (between 0 and 255): "; cin >> threshold;
+	do {
+		cout << "Enter the threshold value (between 0 and 255): "; cin >> threshold;
+	} while (threshold < 0 || threshold > 255);
 
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < columns; j++) {
@@ -360,6 +434,7 @@ void find_surrounded(int**& inputMatrix, int**& outputMatrix, int rows, int colu
 	}
 }
 
+//NATHAN
 void find_localMaxima()
 {
 }

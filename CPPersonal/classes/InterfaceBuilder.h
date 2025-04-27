@@ -30,7 +30,7 @@ public:
 					int h);
 	void setCursorPosition(int x, int y);
 	void setCentering(bool);
-	void s_TxtColor(WORD attributes);
+	void s_TxtColor(WORD attributes); // sets text color
 
 
 	int getConsoleWidth() const;
