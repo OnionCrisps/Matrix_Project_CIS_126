@@ -39,7 +39,7 @@ public:
 
 	void push_toOptions(vector<string>);
 	
-	void push_Functions(void(*)());
+	void push_Functions(void(*)()); // one by one
 	void push_Functions(vector<void(*)()>f);
 	void buildMenu();
 
