@@ -23,7 +23,6 @@ void displayFileCreation();
 void displayEnterDirectory();
 
 void displayStart();
-void displayHelp();
 void displayQuit();
 
 void displayMainMenu();
@@ -121,10 +120,6 @@ void displayStart() {
 
 	return;
 }
-void displayHelp() {
-	cout << "Help" << endl;
-	return;
-}
 
 void displayQuit() {
 	exit(0);
@@ -133,8 +128,8 @@ void displayQuit() {
 void displayMainMenu()
 {
 	IBuilder menu;
-	vector<string> options = { "Start Program", "Help", "Quit" };
-	vector<void(*)()> functions = { displayStart, displayHelp, displayQuit };
+	vector<string> options = { "Start Program", "Quit" };
+	vector<void(*)()> functions = { displayStart, displayQuit };
 
 	menu.push_toOptions(options);
 	menu.push_Functions(functions);
