@@ -47,7 +47,7 @@ int** loadMatrix(const string& fileName, int& rows, int& cols);
 void freeMatrix(int**& matrix, int rows);
 
 void find_surrounded(int**& inputMatrix, int**& outputMatrix, int rows, int columns);
-void find_localMaxima();
+void find_localMaxima(int**& inputMatrix, int**& outputMatrix, int rows, int columns);
 
 
 //C:\\Users\\redgi\\OneDrive\\Desktop\\file.txt
@@ -171,7 +171,7 @@ void displaySurrounded()
 void displayMaxima()
 {
 	find_localMaxima(globalInputMatrix, globalOutputMatrix, globalRows, globalCols);
-	displayResultMatrix(globalInputMatrix, globalOutputMatrix, globalRows, globalCols);
+	displayResultMatrix(globalOutputMatrix, globalRows, globalCols);
 }
 
 void displayResultMatrix(int** outputMatrix, int& row, int& col)
@@ -430,7 +430,7 @@ void find_surrounded(int**& inputMatrix, int**& outputMatrix, int rows, int colu
 }
 
 //NATHAN
-void find_localMaxima()
+void find_localMaxima(int**& inputMatrix, int**& outputMatrix, int rows, int columns)
 {
     for (int i = 0; i < rows; i++)
     {
