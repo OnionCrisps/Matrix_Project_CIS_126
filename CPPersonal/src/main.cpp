@@ -170,8 +170,8 @@ void displaySurrounded()
 //NATHAN
 void displayMaxima()
 {
-	//find_localMaxima(...);
-	//displayResultMatrix(...);
+	find_localMaxima(globalInputMatrix, globalOutputMatrix, globalRows, globalCols);
+	displayResultMatrix(globalInputMatrix, globalOutputMatrix, globalRows, globalCols);
 }
 
 void displayResultMatrix(int** outputMatrix, int& row, int& col)
@@ -432,4 +432,35 @@ void find_surrounded(int**& inputMatrix, int**& outputMatrix, int rows, int colu
 //NATHAN
 void find_localMaxima()
 {
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < columns; j++)
+        {
+            int valueInput = inputMatrix[i][j];
+            bool localMax = true; 
+
+            
+            if (i > 0 && inputMatrix[i - 1][j] >= valueInput)
+                localMax = false;
+            
+            if (i < rows - 1 && inputMatrix[i + 1][j] >= valueInput)
+                localMax = false;
+            
+            if (j > 0 && inputMatrix[i][j - 1] >= valueInput)
+                localMax = false;
+            
+            if (j < columns - 1 && inputMatrix[i][j + 1] >= valueInput)
+                localMax = false;
+
+            if (localMax)
+            {
+                outputMatrix[i][j] = 1;
+            }
+            else
+            {
+                outputMatrix[i][j] = 0;
+            }
+        }
+    }
 }
+
